@@ -1,0 +1,98 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vmName": {
+        "type": "string",
+        "defaultValue": "MyVM",
+        "metadata": {
+          "description": "Nom de la machine virtuelle."
+        }
+      },
+      "adminUsername": {
+        "type": "string",
+        "metadata": {
+          "description": "Nom de l'administrateur de la machine virtuelle."
+        }
+      },
+      "adminPassword": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Mot de passe administrateur de la machine virtuelle."
+        }
+      },
+      "mysqlServerName": {
+        "type": "string",
+        "defaultValue": "my-mysql-server",
+        "metadata": {
+          "description": "Nom du serveur MySQL."
+        }
+      },
+      "mysqlAdminUsername": {
+        "type": "string",
+        "metadata": {
+          "description": "Nom de l'administrateur du serveur MySQL."
+        }
+      },
+      "mysqlAdminPassword": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Mot de passe administrateur du serveur MySQL."
+        }
+      }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "apiVersion": "2021-07-01",
+        "name": "[parameters('vmName')]",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "Standard_DS1_v2"
+          },
+          "osProfile": {
+            "computerName": "[parameters('vmName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "Canonical",
+              "offer": "UbuntuServer",
+              "sku": "18.04-LTS",
+              "version": "latest"
+            }
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', 'myNIC')]"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "Microsoft.DBforMySQL/servers",
+        "apiVersion": "2017-12-01",
+        "name": "[parameters('mysqlServerName')]",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "administratorLogin": "[parameters('mysqlAdminUsername')]",
+          "administratorLoginPassword": "[parameters('mysqlAdminPassword')]",
+          "version": "5.7",
+          "storageProfile": {
+            "storageMB": 51200
+          }
+        },
+        "sku": {
+          "name": "GP_Gen5_2",
+          "tier": "GeneralPurpose",
+          "capacity": 2,
+          "family": "Gen5"
+        }
+      }
+    ]
+  }
+  

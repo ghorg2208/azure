@@ -1,0 +1,17 @@
+az deployment group create `
+  --resource-group lab1correct `
+  --template-file template.json `
+  --parameters appName=YourAppName
+
+
+
+az deployment group create --resource-group lab1correct --template-file template.json --parameters appServiceName=myUniqueAppServiceName sqlServerName=myUniqueSqlServerName sqlDatabaseName=myUniqueDatabaseName
+
+
+az deployment group show --resource-group lab1correct --name <deployment_name>
+
+
+az deployment group show --resource-group lab1correct --name <deployment_name> --query properties.provisioningState
+
+
+az deployment group show --resource-group lab1correct --name <deployment_name> --query properties.outputs
